@@ -12,6 +12,21 @@ function selectWorkspace() {
         });
 }
 
+function addNewWorkspace() {
+    const workspaceName = prompt("請輸入新的工作位置名稱：");
+    if (workspaceName) {
+        window.api.createNewWorkspace(workspaceName)
+            .then(() => {
+                console.log('工作位置新增成功');
+                // 重新加載工作空間列表
+                loadWorkspaces();
+            })
+            .catch((error) => {
+                console.error('新增工作位置時發生錯誤:', error);
+            });
+    }
+}
+
 // dashboard.js
 function backToWorkspaceSelection() {
     console.log('嘗試返回工作空間選擇頁面'); // 調試信息
@@ -23,6 +38,7 @@ function backToWorkspaceSelection() {
             console.error('返回工作空間選擇頁面時發生錯誤:', error);
         });
 }
+
 
 // 初始時隱藏工作空間詳情
 document.getElementById('workspace-details').style.display = 'none';

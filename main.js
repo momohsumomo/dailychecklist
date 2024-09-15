@@ -1,4 +1,3 @@
-
 const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 const fs = require('fs');
@@ -49,7 +48,6 @@ app.whenReady().then(createWindow);
 
 // OAuth 登入處理
 ipcMain.handle('start-oauth', async () => {
-    // 不用每次寫入 token
     await handleOAuthProcess();
 });
 
@@ -100,6 +98,27 @@ async function handleOAuthProcess() {
     }
 }
 
+// 創建新工作空間
+ipcMain.handle('createNewWorkspace', async (event, workspaceName) => {
+    if (!workspaceName) {
+        console.error("必須輸入工作空間名稱");
+        return;
+    }
+    try {
+        console.log(`嘗試創建工作空間：${workspaceName}`); // 調試訊息
+        const newSheetId = await createPermissionSheet(oAuth2Client, workspaceName);
+        if (newSheetId) {
+            console.log(`創建成功，工作空間 ID：${newSheetId}`); // 調試訊息
+            // 成功創建後載入工作空間選擇頁面
+            mainWindow.loadFile('pages/workspaceSelection.html');
+        } else {
+            console.error('創建工作空間失敗，未獲得新的 Sheet ID');
+        }
+    } catch (error) {
+        console.error('創建工作空間時發生錯誤:', error);
+    }
+});
+
 // 列出工作空間
 ipcMain.handle('listWorkspaces', async () => {
     try {
@@ -114,22 +133,6 @@ ipcMain.handle('listWorkspaces', async () => {
     }
 });
 
-// 創建新工作空間
-ipcMain.handle('createNewWorkspace', async (event, workspaceName) => {
-    if (!workspaceName) {
-        console.error("必須輸入工作空間名稱");
-        return;
-    }
-    try {
-        const newSheetId = await createPermissionSheet(oAuth2Client, workspaceName);
-        if (newSheetId) {
-            mainWindow.loadFile('pages/workspaceSelection.html'); // 回到選擇頁面重新載入列表
-        }
-    } catch (error) {
-        console.error('創建工作空間時發生錯誤:', error);
-    }
-});
-
 // 選擇工作空間
 ipcMain.handle('selectWorkspace', async (event, workspaceId) => {
     try {
@@ -140,9 +143,14 @@ ipcMain.handle('selectWorkspace', async (event, workspaceId) => {
     }
 });
 
+// 返回工作空間選擇
 ipcMain.handle('back-to-workspace-selection', async () => {
-    // 切換回到工作空間選擇頁面
-    mainWindow.loadFile('pages/workspaceSelection.html');
+    try {
+        console.log('返回到工作空間選擇頁面'); // 調試訊息
+        mainWindow.loadFile('pages/workspaceSelection.html');
+    } catch (error) {
+        console.error('返回工作空間選擇頁面時發生錯誤:', error);
+    }
 });
 
 app.on('window-all-closed', () => {

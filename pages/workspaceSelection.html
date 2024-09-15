@@ -17,46 +17,27 @@
         li:hover {
             text-decoration: underline; /* 滑鼠移過去時有底線 */
         }
+        /* 隱藏輸入框 */
+        #workspace-name-input {
+            display: none;
+        }
     </style>
 </head>
 <body>
     <h1>選擇工作空間</h1>
+
+    <!-- 工作空間列表 -->
     <ul id="workspace-list">
         <!-- 這裡會由 JavaScript 動態填充 -->
     </ul>
 
-    <script>
-        // 從主進程獲取工作空間列表並顯示
-        async function loadWorkspaces() {
-            try {
-                const workspaces = await window.api.listWorkspaces();
-                const workspaceList = document.getElementById('workspace-list');
-                workspaceList.innerHTML = ''; // 清空現有的列表
+    <!-- 新增工作空間的部分 -->
+    <button onclick="showWorkspaceInput()">新增工作位置</button>
+    <div id="workspace-name-input">
+        <input type="text" id="new-workspace-name" placeholder="輸入新的工作空間名稱">
+        <button onclick="addNewWorkspace()">確認新增</button>
+    </div>
 
-                // 動態生成工作空間列表
-                workspaces.forEach(workspace => {
-                    const li = document.createElement('li');
-                    li.textContent = workspace.name;
-                    li.onclick = () => selectWorkspace(workspace.id);
-                    workspaceList.appendChild(li);
-                });
-            } catch (error) {
-                console.error('獲取工作空間列表時發生錯誤:', error);
-            }
-        }
-
-        // 選擇工作空間
-        async function selectWorkspace(workspaceId) {
-            try {
-                await window.api.selectWorkspace(workspaceId);
-                // 選擇工作空間後，直接跳轉至 dashboard.html
-            } catch (error) {
-                console.error('選擇工作空間時發生錯誤:', error);
-            }
-        }
-
-        // 初始化
-        loadWorkspaces();
-    </script>
+    <script src="../modules/workspaceSelection.js"></script>
 </body>
 </html>

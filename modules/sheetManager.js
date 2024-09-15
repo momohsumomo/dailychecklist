@@ -2,7 +2,7 @@ const { google } = require('googleapis');
 const sheets = google.sheets('v4');
 const drive = google.drive('v3');
 
-// 創建新的工作表並命名
+// 創建新的工作表
 async function createPermissionSheet(auth, workspaceName) {
     const resource = {
         properties: {
@@ -10,16 +10,15 @@ async function createPermissionSheet(auth, workspaceName) {
         }
     };
     try {
-        const sheet = await sheets.spreadsheets.create({
+        const response = await sheets.spreadsheets.create({
             auth,
-            resource
+            resource,
         });
-
-        const spreadsheetId = sheet.data.spreadsheetId;
-        console.log(`創建的工作空間 SpreadsheetId: ${spreadsheetId}`);
+        const spreadsheetId = response.data.spreadsheetId;
+        console.log(`創建的工作表 ID：${spreadsheetId}`);
         return spreadsheetId;
     } catch (error) {
-        console.error('創建工作空間時發生錯誤:', error);
+        console.error('創建工作表時發生錯誤:', error);
         throw error;
     }
 }
