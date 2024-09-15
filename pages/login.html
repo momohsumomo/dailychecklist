@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登入 Daily Checklist</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+    <h1>登入 Daily Checklist</h1>
+    <button id="loginButton">Login with Google</button>
+
+    <script>
+        document.getElementById('loginButton').addEventListener('click', () => {
+            window.api.startOAuth();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+/DailyChecklist2
+│
+├── /assets                
+│   ├── /css
+│   │   └── style.css      
+│   └── /img
+│       └── logo.png       
+│
+├── /modules               
+│   ├── auth.js            
+│   ├── taskManager.js     
+│   ├── sheetManager.js    
+│   └── nameMapping.js     
+│
+├── /pages                 
+│   ├── login.html         
+│   ├── dashboard.html     
+│   └── tasks.html         
+│
+├── /preload               
+│   └── preload.js         
+│
+├── main.js                
+└── package.json           

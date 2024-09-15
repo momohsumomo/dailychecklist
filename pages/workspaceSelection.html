@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>選擇工作空間</title>
+    <style>
+        /* 基本樣式 */
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            cursor: pointer;
+            color: blue; /* 讓文字變藍色以顯示可點擊 */
+            margin: 5px 0;
+        }
+        li:hover {
+            text-decoration: underline; /* 滑鼠移過去時有底線 */
+        }
+    </style>
+</head>
+<body>
+    <h1>選擇工作空間</h1>
+    <ul id="workspace-list">
+        <!-- 這裡會由 JavaScript 動態填充 -->
+    </ul>
+
+    <script>
+        // 從主進程獲取工作空間列表並顯示
+        async function loadWorkspaces() {
+            try {
+                const workspaces = await window.api.listWorkspaces();
+                const workspaceList = document.getElementById('workspace-list');
+                workspaceList.innerHTML = ''; // 清空現有的列表
+
+                // 動態生成工作空間列表
+                workspaces.forEach(workspace => {
+                    const li = document.createElement('li');
+                    li.textContent = workspace.name;
+                    li.onclick = () => selectWorkspace(workspace.id);
+                    workspaceList.appendChild(li);
+                });
+            } catch (error) {
+                console.error('獲取工作空間列表時發生錯誤:', error);
+            }
+        }
+
+        // 選擇工作空間
+        async function selectWorkspace(workspaceId) {
+            try {
+                await window.api.selectWorkspace(workspaceId);
+                // 選擇工作空間後，直接跳轉至 dashboard.html
+            } catch (error) {
+                console.error('選擇工作空間時發生錯誤:', error);
+            }
+        }
+
+        // 初始化
+        loadWorkspaces();
+    </script>
+</body>
+</html>

@@ -1,0 +1,5 @@
+# 忽略 node_modules 及其子目錄
+node_modules/
+
+# 保險起見，明確忽略 electron/dist/ 及其子目錄
+node_modules/electron/dist/

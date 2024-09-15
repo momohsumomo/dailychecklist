@@ -1,0 +1,49 @@
+<!-- pages/manageMembers.html -->
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理成員</title>
+</head>
+<body>
+    <h1>成員與權限管理</h1>
+    <div>
+        <button id="add-member">新增成員</button>
+        <ul id="member-list"></ul>
+    </div>
+
+    <!-- 新增成員彈出窗口 -->
+    <div id="member-modal" style="display:none;">
+        <label>成員名稱：</label>
+        <input type="text" id="member-name" /><br>
+        <label>Google 帳號：</label>
+        <input type="text" id="member-email" /><br>
+        <label>角色：</label>
+        <select id="member-role">
+            <option value="Admin">管理者</option>
+            <option value="User">一般使用者</option>
+        </select><br>
+        <button id="submit-member">提交</button>
+        <button id="cancel-member">取消</button>
+    </div>
+
+    <script>
+        document.getElementById('add-member').onclick = function () {
+            document.getElementById('member-modal').style.display = 'block';
+        };
+        document.getElementById('cancel-member').onclick = function () {
+            document.getElementById('member-modal').style.display = 'none';
+        };
+        document.getElementById('submit-member').onclick = async function () {
+            const name = document.getElementById('member-name').value;
+            const email = document.getElementById('member-email').value;
+            const role = document.getElementById('member-role').value;
+            const workspace = 'XX診所';  // 替換為實際工作空間名稱
+
+            await window.api.addMember(name, email, role, workspace);
+            document.getElementById('member-modal').style.display = 'none';
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tasks Management</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+    <h1>Task Management</h1>
+    <button id="back">Back to Dashboard</button>
+
+    <!-- Task management UI -->
+
+    <script>
+        document.getElementById('back').addEventListener('click', () => {
+            window.api.loadDashboard(); // 返回 dashboard 页面
+        });
+    </script>
+</body>
+</html>
