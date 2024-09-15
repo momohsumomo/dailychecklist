@@ -1,3 +1,10 @@
+// 載入環境變數
+require('dotenv').config();
+
+const { app, BrowserWindow, ipcMain } = require('electron');
+// 其他代碼...
+
+
 const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 const fs = require('fs');

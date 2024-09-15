@@ -3,3 +3,6 @@ node_modules/
 
 # 保險起見，明確忽略 electron/dist/ 及其子目錄
 node_modules/electron/dist/
+
+# Ignore environment variables file
+.env
