@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-    <meta charset="UTF-8">
-    <title>選擇工作空間</title>
-    <style>
+     <meta charset="UTF-8">
+     <meta http-equiv="Content-Security-Policy" content="script-src 'self'; object-src 'none';">
+     <title>選擇工作空間</title>
+     <style>
         /* 基本樣式 */
         ul {
             list-style-type: none;
@@ -11,11 +12,11 @@
         }
         li {
             cursor: pointer;
-            color: blue; /* 讓文字變藍色以顯示可點擊 */
+            color: blue;
             margin: 5px 0;
         }
         li:hover {
-            text-decoration: underline; /* 滑鼠移過去時有底線 */
+            text-decoration: underline;
         }
         /* 隱藏輸入框 */
         #workspace-name-input {
@@ -32,10 +33,10 @@
     </ul>
 
     <!-- 新增工作空間的部分 -->
-    <button onclick="showWorkspaceInput()">新增工作位置</button>
+    <button id="show-input-button">新增工作空間</button>
     <div id="workspace-name-input">
         <input type="text" id="new-workspace-name" placeholder="輸入新的工作空間名稱">
-        <button onclick="addNewWorkspace()">確認新增</button>
+        <button id="add-workspace-button">確認新增</button>
     </div>
 
     <script src="../modules/workspaceSelection.js"></script>

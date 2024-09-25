@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Dashboard</title>
     <style>
-        /* 左箭頭按鈕的樣式 */
+        /* 返回按鈕 */
         .back-button {
             position: absolute;
             top: 10px;
@@ -14,21 +14,135 @@
             font-size: 24px;
             cursor: pointer;
         }
+
+        /* 任務和月曆區域排版 */
+        .main-content {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        /* 大方格容器 */
+        .task-container {
+            background-color: #f9f9f9;
+            padding: 40px;
+            margin: 20px;
+            width: 70%;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .task-item {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+
+        /* 右上角的新增任務按鈕 */
+        .add-task-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .add-task-btn:hover {
+            background-color: #45a049;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 15% auto;
+            padding: 20px;
+            border-radius: 5px;
+            width: 80%;
+            max-width: 600px;
+        }
+
+        .close-btn {
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close-btn:hover, .close-btn:focus {
+            color: red;
+        }
+
+        .voice-input {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        /* 迷你月曆樣式，靠左 */
+        .mini-calendar {
+            margin: 20px;
+            background-color: #fff;
+            padding: 15px;
+            width: 25%;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .mini-calendar h3 {
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 <body>
+    <!-- 返回按鈕 -->
+    <button class="back-button" id="back-button">&larr;</button>
 
+    <!-- 右上角的新增任務按鈕 -->
+    <button id="addTaskBtn" class="add-task-btn">新增任務 +</button>
 
-    <!-- 返回按鈕，使用 &larr; 表示左箭頭 -->
-    <button class="back-button" onclick="backToWorkspaceSelection()">&larr;</button>
+    <!-- 主內容區域，包含迷你月曆和大方格 -->
+    <div class="main-content">
+        <!-- 迷你月曆區域 -->
+        <div id="miniCalendar" class="mini-calendar">
+            <h3>迷你月曆</h3>
+        </div>
 
-    <h1>工作空間 Dashboard</h1>
+        <!-- 大方格，顯示任務 -->
+        <div id="taskContainer" class="task-container">
+            <h2>今日任務</h2>
+            <div id="taskList">
+                <!-- 任務會動態載入 -->
+            </div>
+        </div>
+    </div>
 
-    <!-- Workspace details, visible after workspace is selected -->
-    <div id="workspace-details">
-        <h2>工作空間詳情</h2>
-        <p>這裡是選定的工作空間內容。</p>
-        <!-- 在這裡可以添加其他工作空間的功能，例如查看任務、成員等 -->
+    <!-- 語音輸入 -->
+    <div id="voiceInputContainer" class="voice-input">
+        <button id="voiceInputBtn">🎤 語音輸入</button>
+    </div>
+
+    <!-- 新增任務彈出視窗 -->
+    <div id="addTaskModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2>新增任務</h2>
+            <input type="text" id="taskName" placeholder="任務名稱">
+            <input type="text" id="taskOwner" placeholder="負責人">
+            <button id="saveTaskBtn">儲存任務</button>
+        </div>
     </div>
 
     <script src="../modules/dashboard.js"></script>

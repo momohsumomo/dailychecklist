@@ -2,7 +2,7 @@ const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const { startOAuth, getTokenFromCode, oAuth2Client, isTokenExpired } = require('./modules/auth');
-const { createPermissionSheet, listWorkspaces, loadWorkspaceData } = require('./modules/sheetManager');
+const { createPermissionSheet, listWorkspaces } = require('./modules/sheetManager');
 const TOKEN_PATH = path.join(__dirname, 'token.json');
 
 let mainWindow;
@@ -18,9 +18,8 @@ function createWindow() {
         }
     });
 
-    // 驗證 Token 並選擇畫面
     handleTokenAndLoadWindow();
-    
+
     mainWindow.on('closed', () => {
         mainWindow = null;
     });
@@ -31,28 +30,21 @@ function handleTokenAndLoadWindow() {
         const token = JSON.parse(fs.readFileSync(TOKEN_PATH, 'utf8'));
         oAuth2Client.setCredentials(token);
 
-        // Token 過期檢查
         if (isTokenExpired()) {
-            console.log('Token 過期，請重新登入');
             fs.unlinkSync(TOKEN_PATH);
             mainWindow.loadFile('pages/login.html');
         } else {
-            mainWindow.loadFile('pages/workspaceSelection.html'); // 直接進入工作空間
+            mainWindow.loadFile('pages/workspaceSelection.html');
         }
     } else {
-        mainWindow.loadFile('pages/login.html'); // 無 Token 時跳到登入畫面
+        mainWindow.loadFile('pages/login.html');
     }
 }
 
 app.whenReady().then(createWindow);
 
-// OAuth 登入處理
+// OAuth處理
 ipcMain.handle('start-oauth', async () => {
-    await handleOAuthProcess();
-});
-
-// 處理 OAuth 流程
-async function handleOAuthProcess() {
     try {
         const authUrl = await startOAuth();
         let authWindow = new BrowserWindow({
@@ -90,29 +82,25 @@ async function handleOAuthProcess() {
             });
 
             authWindow.on('closed', () => {
-                reject(new Error('OAuth window was closed by the user'));
+                reject(new Error('OAuth窗口已關閉'));
             });
         });
     } catch (error) {
-        console.error('Error during OAuth process:', error);
+        console.error('OAuth 過程中發生錯誤:', error);
     }
-}
+});
 
 // 創建新工作空間
 ipcMain.handle('createNewWorkspace', async (event, workspaceName) => {
-    if (!workspaceName) {
-        console.error("必須輸入工作空間名稱");
+    if (!workspaceName || typeof workspaceName !== 'string' || workspaceName.trim() === '') {
+        console.error('工作空間名稱無效');
         return;
     }
+
     try {
-        console.log(`嘗試創建工作空間：${workspaceName}`); // 調試訊息
-        const newSheetId = await createPermissionSheet(oAuth2Client, workspaceName);
+        const newSheetId = await createPermissionSheet(workspaceName.trim());
         if (newSheetId) {
-            console.log(`創建成功，工作空間 ID：${newSheetId}`); // 調試訊息
-            // 成功創建後載入工作空間選擇頁面
             mainWindow.loadFile('pages/workspaceSelection.html');
-        } else {
-            console.error('創建工作空間失敗，未獲得新的 Sheet ID');
         }
     } catch (error) {
         console.error('創建工作空間時發生錯誤:', error);
@@ -128,28 +116,47 @@ ipcMain.handle('listWorkspaces', async () => {
             name: sheet.name
         }));
     } catch (error) {
-        console.error('Error listing workspaces:', error);
+        console.error('列出工作空間時發生錯誤:', error);
         throw error;
     }
 });
 
-// 選擇工作空間
+app.on('window-all-closed', () => {
+    if (process.platform !== 'darwin') {
+        app.quit();
+    }
+});
+
+app.on('activate', () => {
+    if (BrowserWindow.getAllWindows().length === 0) {
+        createWindow();
+    }
+});
+
+// 选择工作空间
 ipcMain.handle('selectWorkspace', async (event, workspaceId) => {
     try {
-        console.log('已選擇工作空間 ID:', workspaceId);
-        mainWindow.loadFile('pages/dashboard.html'); // 成功選擇後進入主介面
+        // 可以在此處加入任何與選擇工作空間相關的邏輯
+        console.log(`選擇的工作空間 ID: ${workspaceId}`);
+
+        // 加載 dashboard 頁面
+        mainWindow.loadFile('pages/dashboard.html');
+
+        // 當 DOM 加載完成後發送工作空間信息到渲染進程
+        mainWindow.webContents.once('dom-ready', () => {
+            mainWindow.webContents.send('workspace-selected', workspaceId); // 傳遞工作空間 ID
+        });
     } catch (error) {
         console.error('選擇工作空間時發生錯誤:', error);
     }
 });
 
-// 返回工作空間選擇
+// 返回到工作空间选择页面
 ipcMain.handle('back-to-workspace-selection', async () => {
     try {
-        console.log('返回到工作空間選擇頁面'); // 調試訊息
         mainWindow.loadFile('pages/workspaceSelection.html');
     } catch (error) {
-        console.error('返回工作空間選擇頁面時發生錯誤:', error);
+        console.error('返回工作空间选择页面时发生错误:', error);
     }
 });
 
